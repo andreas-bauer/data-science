@@ -1,0 +1,116 @@
+---
+title: "First steps with iris data set"
+author: "Andreas Bauer"
+date: "2023-11-08"
+execute:
+  echo: true
+  warning: false
+fig-dpi: 300
+format: 
+  html:
+    fig-width: 8
+    fig-height: 6
+---
+
+## Introduction
+
+TBA
+
+## Load libraries
+
+```{r}
+library(tidyverse)
+library(caret)
+library(ggplot2)
+library(rattle)
+```
+
+## Load iris data set
+
+```{r}
+data(iris)
+head(iris)
+```
+
+## Visualize features
+
+```{r}
+featurePlot(
+  x = iris[, 1:4], 
+  y = iris$Species, 
+  plot = "pairs",
+  ## Add a key at the top
+  auto.key = list(columns = 3))
+```
+
+```{r}
+featurePlot(
+  
+  x = iris[, 1:4], 
+  y = iris$Species,
+  plot = "density", 
+  ## Pass in options to xyplot() to 
+  ## make it prettier
+  scales = list(
+    x = list(relation="free"), 
+    y = list(relation="free")), 
+  adjust = 1.5, 
+  pch = "|", 
+  layout = c(4, 1), 
+  auto.key = list(columns = 3))
+```
+
+## Train model
+
+For model avilidation we use a 10-fold [cross validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics)) approach.
+`trainControl` setup all computational nuances that we need to train the model.
+
+`Species ~ .` means that we use all features to predict the target variable. 
+In our case, this would be equal to `Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width`.
+
+Since we have categorical target values (the three different species), we should use models for classification tasks.
+
+We use the following models:
+- `multinom`: Multinomial Logistic Regression
+- `rpart`: Decision Tree
+- `nnet`: Neural Network
+- `svmLinear`: Support Vector Machine
+- `knn`: K-Nearest Neighbors
+- `nb`: Naive Bayes
+
+```{r}
+#| output: false
+
+metric <- "Accuracy" 
+K_FOLD_CROSS_VALIDATION <- 'cv'
+train_control <- trainControl(method = K_FOLD_CROSS_VALIDATION, number = 10)
+methods <- c('multinom', 'rpart', 'nnet', 'svmLinear', 'knn', 'nb')
+
+fits <- list()
+for (method in methods) {
+  m <- train(Species ~ ., data = iris, method = method, metric=metric, trControl = train_control)
+  fits[[method]] <- m
+}
+```
+
+## Compare models
+
+```{r}
+res <- resamples(fits)
+summary(res)
+```
+
+```{r}
+dotplot(res)
+```
+
+The figure above shows the accuracy of the different models.
+The Kappa value represent the agreement between the predicted and the observed values.
+
+## Visualize decision tree
+
+The decision tree can be visualized very easily, which allows an understanding of the underlying decision process.
+
+```{r}
+fancyRpartPlot(fits$rpart$finalModel)
+```
