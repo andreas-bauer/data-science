@@ -1,0 +1,4 @@
+project:
+  title: "Data Science Playground"
+  type: website
+  output-dir: ./docs
