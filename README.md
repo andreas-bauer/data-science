@@ -1,5 +1,7 @@
 # Data Science
 
+<p align="center"><img src="logo.png"></p>
+
 ## ML models using the iris
 
 Using ML models to classify the different species represented in the iris dataset.
