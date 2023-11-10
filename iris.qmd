@@ -14,7 +14,9 @@ format:
 
 ## Introduction
 
-TBA
+We use the [Iris Species data set](https://www.kaggle.com/datasets/uciml/iris#) to train and evaluate different machine learning models.
+This labled data set contains 150 observations of iris flowers with the following features:
+`Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`.
 
 ## Load libraries
 
@@ -29,7 +31,6 @@ library(rattle)
 
 ```{r}
 data(iris)
-head(iris)
 ```
 
 ## Visualize features
@@ -45,12 +46,9 @@ featurePlot(
 
 ```{r}
 featurePlot(
-  
   x = iris[, 1:4], 
   y = iris$Species,
   plot = "density", 
-  ## Pass in options to xyplot() to 
-  ## make it prettier
   scales = list(
     x = list(relation="free"), 
     y = list(relation="free")), 
@@ -71,6 +69,7 @@ In our case, this would be equal to `Species ~ Sepal.Length + Sepal.Width + Peta
 Since we have categorical target values (the three different species), we should use models for classification tasks.
 
 We use the following models:
+
 - `multinom`: Multinomial Logistic Regression
 - `rpart`: Decision Tree
 - `nnet`: Neural Network
@@ -83,12 +82,13 @@ We use the following models:
 
 metric <- "Accuracy" 
 K_FOLD_CROSS_VALIDATION <- 'cv'
-train_control <- trainControl(method = K_FOLD_CROSS_VALIDATION, number = 10)
+ctrl <- trainControl(method = K_FOLD_CROSS_VALIDATION, number = 10)
+
 methods <- c('multinom', 'rpart', 'nnet', 'svmLinear', 'knn', 'nb')
 
 fits <- list()
 for (method in methods) {
-  m <- train(Species ~ ., data = iris, method = method, metric=metric, trControl = train_control)
+  m <- train(Species ~ ., data = iris, method = method, metric=metric, trControl = ctrl)
   fits[[method]] <- m
 }
 ```
@@ -106,10 +106,13 @@ dotplot(res)
 
 The figure above shows the accuracy of the different models.
 The Kappa value represent the agreement between the predicted and the observed values.
+Of all models, the neural network has a high accuracy and kappa value.
+However, the other models are not far behind.
+Further analysis and consideration of more metrics could help to find the best model.
 
 ## Visualize decision tree
 
-The decision tree can be visualized very easily, which allows an understanding of the underlying decision process.
+Of the diffrent models, the decision tree can be visualized very easily, which allows an understanding of the underlying decision process.
 
 ```{r}
 fancyRpartPlot(fits$rpart$finalModel)
