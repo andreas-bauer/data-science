@@ -1,0 +1,71 @@
+---
+title: "Augmented Testing Study Analysis"
+author: "Andreas Bauer"
+date: "2024-01-02"
+execute:
+  echo: true
+  warning: false
+fig-dpi: 300
+format:
+  html:
+    fig-width: 8
+    fig-height: 6
+---
+
+## Introduction
+
+TBD
+
+## Load libraries
+
+```{r}
+library(tidyverse)
+```
+
+## Data
+
+First, load the data from the table of results.
+
+```{r load-data}
+df_raw <- read.csv(file = "data/at-study.csv", header = TRUE, sep = ",", fileEncoding = "UTF-8-BOM")
+```
+
+### Cleanup and transform data
+
+To work with the raw data we transform into the following more convenient format:
+
+| Column | Description | Type |
+|---|---|---|
+| `id` | The identifier of a participant | int |
+| `tc` | The identifier of a test case | int |
+| `tc_big` | Size of the test case.  `TRUE` for bigger and `FALSE` for smaller test cases. | Boolean |
+| `treatment` | `TRUE` for Augmented Testing and `FALSE` for manual GUI testing | Boolean |
+| `duration_scaled` | Duration of performing test cases (normalized) | float |
+
+Next, we normalize the duration of performeed test cases to allow a comparison between test cases of different size.
+The duration is scaled to an interval of size 1 centered around the mean value of each test case.
+
+```{r}
+df <- df_raw %>%
+  pivot_longer(
+    cols = c(matches("TC._treatment"), matches("TC._seconds$")),
+    names_to = c("tc", ".value"), names_pattern = "TC(.)_(.*)"
+  ) %>%
+  select("ID", "tc", "treatment", "seconds") %>%
+  mutate(
+    treatment = (treatment == "A"),
+    tc_big = (tc %in% c(3, 4, 7, 8))
+  )
+
+head(df)
+```
+
+```{r}
+df <- df %>%
+  group_by(tc) %>%
+  mutate(
+    duration_scaled = (seconds - mean(seconds)) / (max(seconds) - min(seconds))
+  )
+```
+
+
