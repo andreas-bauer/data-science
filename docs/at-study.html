@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Andreas Bauer">
-<meta name="dcterms.date" content="2023-11-08">
+<meta name="dcterms.date" content="2024-01-02">
 
-<title>Data Science Playground - First steps with iris data set</title>
+<title>Data Science Playground - Augmented Testing Study Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -111,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">First steps with iris data set</h1>
+<h1 class="title">Augmented Testing Study Analysis</h1>
 </div>
 
 
@@ -128,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 8, 2023</p>
+      <p class="date">January 2, 2024</p>
     </div>
   </div>
   
@@ -140,132 +140,100 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>We use the <a href="https://www.kaggle.com/datasets/uciml/iris#">Iris Species data set</a> to train and evaluate different machine learning models. This labled data set contains 150 observations of iris flowers with the following features: <code>Sepal.Length</code>, <code>Sepal.Width</code>, <code>Petal.Length</code>, and <code>Petal.Width</code>.</p>
+<p>TBD</p>
 </section>
 <section id="load-libraries" class="level2">
 <h2 class="anchored" data-anchor-id="load-libraries">Load libraries</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rattle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="load-iris-data-set" class="level2">
-<h2 class="anchored" data-anchor-id="load-iris-data-set">Load iris data set</h2>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>First, load the data from the table of results.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iris)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df_raw <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file =</span> <span class="st">"data/at-study.csv"</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">","</span>, <span class="at">fileEncoding =</span> <span class="st">"UTF-8-BOM"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="visualize-features" class="level2">
-<h2 class="anchored" data-anchor-id="visualize-features">Visualize features</h2>
+<section id="cleanup-and-transform-data" class="level3">
+<h3 class="anchored" data-anchor-id="cleanup-and-transform-data">Cleanup and transform data</h3>
+<p>To work with the raw data we transform into the following more convenient format:</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>id</code></td>
+<td>The identifier of a participant</td>
+<td>int</td>
+</tr>
+<tr class="even">
+<td><code>tc</code></td>
+<td>The identifier of a test case</td>
+<td>int</td>
+</tr>
+<tr class="odd">
+<td><code>tc_big</code></td>
+<td>Size of the test case. <code>TRUE</code> for bigger and <code>FALSE</code> for smaller test cases.</td>
+<td>Boolean</td>
+</tr>
+<tr class="even">
+<td><code>treatment</code></td>
+<td><code>TRUE</code> for Augmented Testing and <code>FALSE</code> for manual GUI testing</td>
+<td>Boolean</td>
+</tr>
+<tr class="odd">
+<td><code>duration_scaled</code></td>
+<td>Duration of performing test cases (normalized)</td>
+<td>float</td>
+</tr>
+</tbody>
+</table>
+<p>Next, we normalize the duration of performeed test cases to allow a comparison between test cases of different size. The duration is scaled to an interval of size 1 centered around the mean value of each test case.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">featurePlot</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> iris[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> iris<span class="sc">$</span>Species, </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> <span class="st">"pairs"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Add a key at the top</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">auto.key =</span> <span class="fu">list</span>(<span class="at">columns =</span> <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="iris_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="2400"></p>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">featurePlot</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> iris[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> iris<span class="sc">$</span>Species,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> <span class="st">"density"</span>, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">scales =</span> <span class="fu">list</span>(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="fu">list</span>(<span class="at">relation=</span><span class="st">"free"</span>), </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="fu">list</span>(<span class="at">relation=</span><span class="st">"free"</span>)), </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">adjust =</span> <span class="fl">1.5</span>, </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">pch =</span> <span class="st">"|"</span>, </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">layout =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>), </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">auto.key =</span> <span class="fu">list</span>(<span class="at">columns =</span> <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="iris_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="2400"></p>
-</div>
-</div>
-</section>
-<section id="train-model" class="level2">
-<h2 class="anchored" data-anchor-id="train-model">Train model</h2>
-<p>For model avilidation we use a 10-fold <a href="https://en.wikipedia.org/wiki/Cross-validation_(statistics)">cross validation</a> approach. <code>trainControl</code> setup all computational nuances that we need to train the model.</p>
-<p><code>Species ~ .</code> means that we use all features to predict the target variable. In our case, this would be equal to <code>Species ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width</code>.</p>
-<p>Since we have categorical target values (the three different species), we should use models for classification tasks.</p>
-<p>We use the following models:</p>
-<ul>
-<li><code>multinom</code>: Multinomial Logistic Regression</li>
-<li><code>rpart</code>: Decision Tree</li>
-<li><code>nnet</code>: Neural Network</li>
-<li><code>svmLinear</code>: Support Vector Machine</li>
-<li><code>knn</code>: K-Nearest Neighbors</li>
-<li><code>nb</code>: Naive Bayes</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>metric <span class="ot">&lt;-</span> <span class="st">"Accuracy"</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>K_FOLD_CROSS_VALIDATION <span class="ot">&lt;-</span> <span class="st">'cv'</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> K_FOLD_CROSS_VALIDATION, <span class="at">number =</span> <span class="dv">10</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>methods <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'multinom'</span>, <span class="st">'rpart'</span>, <span class="st">'nnet'</span>, <span class="st">'svmLinear'</span>, <span class="st">'knn'</span>, <span class="st">'nb'</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fits <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (method <span class="cf">in</span> methods) {</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">train</span>(Species <span class="sc">~</span> ., <span class="at">data =</span> iris, <span class="at">method =</span> method, <span class="at">metric=</span>metric, <span class="at">trControl =</span> ctrl)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  fits[[method]] <span class="ot">&lt;-</span> m</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="compare-models" class="level2">
-<h2 class="anchored" data-anchor-id="compare-models">Compare models</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">resamples</span>(fits)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df_raw <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(<span class="fu">matches</span>(<span class="st">"TC._treatment"</span>), <span class="fu">matches</span>(<span class="st">"TC._seconds$"</span>)),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"tc"</span>, <span class="st">".value"</span>), <span class="at">names_pattern =</span> <span class="st">"TC(.)_(.*)"</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"ID"</span>, <span class="st">"tc"</span>, <span class="st">"treatment"</span>, <span class="st">"seconds"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment =</span> (treatment <span class="sc">==</span> <span class="st">"A"</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">tc_big =</span> (tc <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-summary.resamples(object = res)
-
-Models: multinom, rpart, nnet, svmLinear, knn, nb 
-Number of resamples: 10 
-
-Accuracy 
-               Min.   1st Qu.    Median      Mean   3rd Qu. Max. NA's
-multinom  0.9333333 0.9500000 1.0000000 0.9800000 1.0000000    1    0
-rpart     0.8666667 0.9333333 0.9333333 0.9333333 0.9333333    1    0
-nnet      0.9333333 0.9333333 1.0000000 0.9733333 1.0000000    1    0
-svmLinear 0.9333333 0.9333333 1.0000000 0.9733333 1.0000000    1    0
-knn       0.9333333 0.9500000 1.0000000 0.9800000 1.0000000    1    0
-nb        0.8666667 0.9333333 0.9666667 0.9600000 1.0000000    1    0
-
-Kappa 
-          Min. 1st Qu. Median Mean 3rd Qu. Max. NA's
-multinom   0.9   0.925   1.00 0.97     1.0    1    0
-rpart      0.8   0.900   0.90 0.90     0.9    1    0
-nnet       0.9   0.900   1.00 0.96     1.0    1    0
-svmLinear  0.9   0.900   1.00 0.96     1.0    1    0
-knn        0.9   0.925   1.00 0.97     1.0    1    0
-nb         0.8   0.900   0.95 0.94     1.0    1    0</code></pre>
+<pre><code># A tibble: 6 × 5
+     ID tc    treatment seconds tc_big
+  &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;       &lt;int&gt; &lt;lgl&gt; 
+1     1 1     FALSE          70 FALSE 
+2     1 2     TRUE           35 FALSE 
+3     1 3     FALSE         253 TRUE  
+4     1 4     TRUE          128 TRUE  
+5     1 5     FALSE          96 FALSE 
+6     1 6     TRUE           42 FALSE </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="iris_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="2400"></p>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(tc) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">duration_scaled =</span> (seconds <span class="sc">-</span> <span class="fu">mean</span>(seconds)) <span class="sc">/</span> (<span class="fu">max</span>(seconds) <span class="sc">-</span> <span class="fu">min</span>(seconds))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>The figure above shows the accuracy of the different models. The Kappa value represent the agreement between the predicted and the observed values. Of all models, the neural network has a high accuracy and kappa value. However, the other models are not far behind. Further analysis and consideration of more metrics could help to find the best model.</p>
+
+
 </section>
-<section id="visualize-decision-tree" class="level2">
-<h2 class="anchored" data-anchor-id="visualize-decision-tree">Visualize decision tree</h2>
-<p>Of the diffrent models, the decision tree can be visualized very easily, which allows an understanding of the underlying decision process.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fancyRpartPlot</span>(fits<span class="sc">$</span>rpart<span class="sc">$</span>finalModel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="iris_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="2400"></p>
-</div>
-</div>
-
-
 </section>
 
 </main> <!-- /main -->

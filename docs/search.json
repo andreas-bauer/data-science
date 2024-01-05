@@ -46,7 +46,7 @@
     "href": "iris.html#compare-models",
     "title": "First steps with iris data set",
     "section": "Compare models",
-    "text": "Compare models\n\nres &lt;- resamples(fits)\nsummary(res)\n\n\nCall:\nsummary.resamples(object = res)\n\nModels: multinom, rpart, nnet, svmLinear, knn, nb \nNumber of resamples: 10 \n\nAccuracy \n               Min.   1st Qu.    Median      Mean 3rd Qu. Max. NA's\nmultinom  0.9333333 1.0000000 1.0000000 0.9866667       1    1    0\nrpart     0.8666667 0.8833333 0.9333333 0.9400000       1    1    0\nnnet      0.9333333 0.9333333 1.0000000 0.9733333       1    1    0\nsvmLinear 0.9333333 0.9333333 0.9333333 0.9600000       1    1    0\nknn       0.8666667 0.9500000 1.0000000 0.9666667       1    1    0\nnb        0.8666667 0.9333333 0.9333333 0.9533333       1    1    0\n\nKappa \n          Min. 1st Qu. Median Mean 3rd Qu. Max. NA's\nmultinom   0.9   1.000    1.0 0.98       1    1    0\nrpart      0.8   0.825    0.9 0.91       1    1    0\nnnet       0.9   0.900    1.0 0.96       1    1    0\nsvmLinear  0.9   0.900    0.9 0.94       1    1    0\nknn        0.8   0.925    1.0 0.95       1    1    0\nnb         0.8   0.900    0.9 0.93       1    1    0\n\n\n\ndotplot(res)\n\n\n\n\nThe figure above shows the accuracy of the different models. The Kappa value represent the agreement between the predicted and the observed values. Of all models, the neural network has a high accuracy and kappa value. However, the other models are not far behind. Further analysis and consideration of more metrics could help to find the best model."
+    "text": "Compare models\n\nres &lt;- resamples(fits)\nsummary(res)\n\n\nCall:\nsummary.resamples(object = res)\n\nModels: multinom, rpart, nnet, svmLinear, knn, nb \nNumber of resamples: 10 \n\nAccuracy \n               Min.   1st Qu.    Median      Mean   3rd Qu. Max. NA's\nmultinom  0.9333333 0.9500000 1.0000000 0.9800000 1.0000000    1    0\nrpart     0.8666667 0.9333333 0.9333333 0.9333333 0.9333333    1    0\nnnet      0.9333333 0.9333333 1.0000000 0.9733333 1.0000000    1    0\nsvmLinear 0.9333333 0.9333333 1.0000000 0.9733333 1.0000000    1    0\nknn       0.9333333 0.9500000 1.0000000 0.9800000 1.0000000    1    0\nnb        0.8666667 0.9333333 0.9666667 0.9600000 1.0000000    1    0\n\nKappa \n          Min. 1st Qu. Median Mean 3rd Qu. Max. NA's\nmultinom   0.9   0.925   1.00 0.97     1.0    1    0\nrpart      0.8   0.900   0.90 0.90     0.9    1    0\nnnet       0.9   0.900   1.00 0.96     1.0    1    0\nsvmLinear  0.9   0.900   1.00 0.96     1.0    1    0\nknn        0.9   0.925   1.00 0.97     1.0    1    0\nnb         0.8   0.900   0.95 0.94     1.0    1    0\n\n\n\ndotplot(res)\n\n\n\n\nThe figure above shows the accuracy of the different models. The Kappa value represent the agreement between the predicted and the observed values. Of all models, the neural network has a high accuracy and kappa value. However, the other models are not far behind. Further analysis and consideration of more metrics could help to find the best model."
   },
   {
     "objectID": "iris.html#visualize-decision-tree",
@@ -54,5 +54,33 @@
     "title": "First steps with iris data set",
     "section": "Visualize decision tree",
     "text": "Visualize decision tree\nOf the diffrent models, the decision tree can be visualized very easily, which allows an understanding of the underlying decision process.\n\nfancyRpartPlot(fits$rpart$finalModel)"
+  },
+  {
+    "objectID": "at-study.html",
+    "href": "at-study.html",
+    "title": "Augmented Testing Study Analysis",
+    "section": "",
+    "text": "TBD"
+  },
+  {
+    "objectID": "at-study.html#introduction",
+    "href": "at-study.html#introduction",
+    "title": "Augmented Testing Study Analysis",
+    "section": "",
+    "text": "TBD"
+  },
+  {
+    "objectID": "at-study.html#load-libraries",
+    "href": "at-study.html#load-libraries",
+    "title": "Augmented Testing Study Analysis",
+    "section": "Load libraries",
+    "text": "Load libraries\n\nlibrary(tidyverse)"
+  },
+  {
+    "objectID": "at-study.html#data",
+    "href": "at-study.html#data",
+    "title": "Augmented Testing Study Analysis",
+    "section": "Data",
+    "text": "Data\nFirst, load the data from the table of results.\n\ndf_raw &lt;- read.csv(file = \"data/at-study.csv\", header = TRUE, sep = \",\", fileEncoding = \"UTF-8-BOM\")\n\n\nCleanup and transform data\nTo work with the raw data we transform into the following more convenient format:\n\n\n\n\n\n\n\n\nColumn\nDescription\nType\n\n\n\n\nid\nThe identifier of a participant\nint\n\n\ntc\nThe identifier of a test case\nint\n\n\ntc_big\nSize of the test case. TRUE for bigger and FALSE for smaller test cases.\nBoolean\n\n\ntreatment\nTRUE for Augmented Testing and FALSE for manual GUI testing\nBoolean\n\n\nduration_scaled\nDuration of performing test cases (normalized)\nfloat\n\n\n\nNext, we normalize the duration of performeed test cases to allow a comparison between test cases of different size. The duration is scaled to an interval of size 1 centered around the mean value of each test case.\n\ndf &lt;- df_raw %&gt;%\n  pivot_longer(\n    cols = c(matches(\"TC._treatment\"), matches(\"TC._seconds$\")),\n    names_to = c(\"tc\", \".value\"), names_pattern = \"TC(.)_(.*)\"\n  ) %&gt;%\n  select(\"ID\", \"tc\", \"treatment\", \"seconds\") %&gt;%\n  mutate(\n    treatment = (treatment == \"A\"),\n    tc_big = (tc %in% c(3, 4, 7, 8))\n  )\n\nhead(df)\n\n# A tibble: 6 × 5\n     ID tc    treatment seconds tc_big\n  &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;       &lt;int&gt; &lt;lgl&gt; \n1     1 1     FALSE          70 FALSE \n2     1 2     TRUE           35 FALSE \n3     1 3     FALSE         253 TRUE  \n4     1 4     TRUE          128 TRUE  \n5     1 5     FALSE          96 FALSE \n6     1 6     TRUE           42 FALSE \n\n\n\ndf &lt;- df %&gt;%\n  group_by(tc) %&gt;%\n  mutate(\n    duration_scaled = (seconds - mean(seconds)) / (max(seconds) - min(seconds))\n  )"
   }
 ]
