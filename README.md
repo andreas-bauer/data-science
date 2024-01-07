@@ -6,10 +6,15 @@
 
 I'm utilizing ML models to classify the different species present in the iris dataset.
 
-- [Rendered HTML](https://andreas-bauer.github.io/data-science/)
+- [Rendered HTML](https://andreas-bauer.github.io/data-science/iris.html)
 - [iris.qmd](./iris.qmd)
 
 You can find another implementation for classifying the iris dataset in [Julian's repository](https://github.com/JulianFrattini/course-dses).
+
+## Augmented Testing study analysis
+
+- [Rendered HTML](https://andreas-bauer.github.io/data-science/at-study.html)
+- [at-study.qmd](./at-study.qmd)
 
 ## License
 
