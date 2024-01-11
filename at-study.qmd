@@ -51,7 +51,7 @@ df <- df_raw %>%
     cols = c(matches("TC._treatment"), matches("TC._seconds$")),
     names_to = c("tc", ".value"), names_pattern = "TC(.)_(.*)"
   ) %>%
-  select("ID", "tc", "treatment", "seconds") %>%
+  select("ID", "tc", "treatment", "seconds", "Exp_industry_years", "Exp_testing_years", "Exp_gui_testing_years") %>%
   mutate(
     treatment = (treatment == "A"),
     tc_big = (tc %in% c(3, 4, 7, 8))
